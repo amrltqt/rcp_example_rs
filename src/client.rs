@@ -5,9 +5,9 @@ use std::net::TcpStream;
 
 fn main() -> std::io::Result<()> {
     let mut stream = TcpStream::connect("127.0.0.1:8087")?;
-    
+        
     let buf = json!({
-        "op": "Sum",
+        "op": "Mean",
         "args": [
             1, 2, 3
         ]

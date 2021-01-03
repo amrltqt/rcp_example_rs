@@ -1,54 +1,31 @@
-use serde::{Deserialize, Serialize};
-use std::error::Error;
 use std::net::{TcpListener, TcpStream};
 
-#[derive(Deserialize, Debug)]
-enum PermittedOperations {
-    Sum,
-    Mean
-}
+use rpc_example_rs::{OperationResponse, OperationRequest, OperationStatus, PermittedOperations};
 
-#[derive(Deserialize, Debug)]
-struct OperationRequest {
-    op: PermittedOperations,
-    args: Vec<i32>
-}
 
-#[derive(Serialize, Debug)]
-struct OperationResponse {
-    status: String,
-    value: i32
-}
-
-fn read_operation_request_from_stream(stream: &TcpStream) -> Result<OperationRequest, Box<dyn Error>> {
-    let mut de = serde_json::Deserializer::from_reader(stream);
-    let ops = OperationRequest::deserialize(&mut de)?;
-    Ok(ops)
-} 
 
 fn compute_response(ops: OperationRequest) -> OperationResponse {
     match ops.op {
         PermittedOperations::Sum => OperationResponse {
-            status: String::from("Ok"),
+            status: OperationStatus::Success,
             value: ops.args.iter().sum()
         },
         PermittedOperations::Mean => OperationResponse {
-            status: String::from("Not supported"),
-            value: 0
+            status: OperationStatus::Success,
+            value: ops.args.iter().sum::<f32>() / ops.args.len() as f32
         }
     }
-}
+}   
 
 fn handle_client(stream: TcpStream)  {
-
     // Lire le stream pour essayer de récupérer une requête connue
-    let result = read_operation_request_from_stream(&stream);
+    let result = OperationRequest::from_stream(&stream);
     
     let response = match result {
         Ok(ops) => compute_response(ops),
         Err(_) => OperationResponse {
-            status: String::from("Error"),
-            value: 0
+            status: OperationStatus::Failure(String::from("Error found")),
+            value: 0.0
         }
     };
 
