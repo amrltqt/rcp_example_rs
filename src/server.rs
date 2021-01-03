@@ -6,21 +6,9 @@ use rpc_example_rs::{
     OperationResponse, 
     OperationRequest, 
     OperationStatus,
-    PermittedOperations
+    compute_response
 };
 
-fn compute_response(ops: OperationRequest) -> OperationResponse {
-    match ops.op {
-        PermittedOperations::Sum => OperationResponse {
-            status: OperationStatus::Success,
-            value: ops.args.iter().sum()
-        },
-        PermittedOperations::Mean => OperationResponse {
-            status: OperationStatus::Success,
-            value: ops.args.iter().sum::<f32>() / ops.args.len() as f32
-        }
-    }
-}   
 
 fn handle_client(stream: TcpStream)  {
     let ip = stream.local_addr().unwrap().ip();

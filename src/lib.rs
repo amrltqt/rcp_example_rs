@@ -43,3 +43,17 @@ impl OperationResponse {
         Ok(resp)
     }
 }
+
+
+pub fn compute_response(ops: OperationRequest) -> OperationResponse {
+    match ops.op {
+        PermittedOperations::Sum => OperationResponse {
+            status: OperationStatus::Success,
+            value: ops.args.iter().sum()
+        },
+        PermittedOperations::Mean => OperationResponse {
+            status: OperationStatus::Success,
+            value: ops.args.iter().sum::<f32>() / ops.args.len() as f32
+        }
+    }
+}   
