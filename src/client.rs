@@ -1,21 +1,27 @@
-use serde_json::json;
-
-use std::io::prelude::*;
 use std::net::TcpStream;
 
-fn main() -> std::io::Result<()> {
-    let mut stream = TcpStream::connect("127.0.0.1:8087")?;
-        
-    let buf = json!({
-        "op": "Mean",
-        "args": [
-            1, 2, 3
-        ]
-    });
-    let _ = stream.write(buf.to_string().as_bytes());
-    let mut buffer = String::new();
-    stream.read_to_string(&mut buffer)?;
+use rpc_example_rs::{OperationRequest, PermittedOperations, OperationResponse};
 
-    println!("{}", buffer);
+
+fn main() -> std::io::Result<()> {
+    let stream = TcpStream::connect("127.0.0.1:8087")?;
+        
+    let ops = OperationRequest {
+        op: PermittedOperations::Sum,
+        args: vec![1.0, 2.0, 3.0]
+    };
+
+    let _ = serde_json::to_writer(&stream, &ops);
+    
+    let result = OperationResponse::try_from_stream(&stream);
+    match result {
+        Ok(response) => {
+            println!("{:?}", response);
+        },
+        Err(err) => {
+            println!("{:?}", err);
+        } 
+    }
+
     Ok(())
 }
