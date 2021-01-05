@@ -2,12 +2,13 @@ use std::net::{TcpListener, TcpStream};
 use log::{info, error};
 use uuid::Uuid;
 
-use rpc_example_rs::{
+use rpc_example_rs::models::{
     OperationResponse, 
     OperationRequest, 
-    OperationStatus,
-    compute_response
+    OperationStatus
 };
+
+use rpc_example_rs::operations::{compute_response};
 
 
 fn handle_client(stream: TcpStream)  {

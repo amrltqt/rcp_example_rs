@@ -1,6 +1,6 @@
 use std::net::TcpStream;
 
-use rpc_example_rs::{OperationRequest, PermittedOperations, OperationResponse};
+use rpc_example_rs::models::{OperationRequest, PermittedOperations, OperationResponse};
 
 
 fn main() -> std::io::Result<()> {
